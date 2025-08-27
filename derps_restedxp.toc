@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: Derps Rested XP
+## Notes: A simple mod to display the current character's rested xp.
+## Version: 1.0
+## Author: Damien
+
+core.lua
