@@ -135,6 +135,41 @@ local function CreateAddonFrame()
     end)
 end
 
+-- event frame
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("ADDON_LOADED")
+
+-- event handler
+eventFrame:SetScript("OnEvent", function()
+    -- the addon is loaded so lets do some things    
+	if (event == "ADDON_LOADED") then     
+        -- create the addon frame before loading config
+        CreateAddonFrame()
+
+        -- get stored frame position
+        DerpsDB = DerpsDB or {}
+        DerpsDB.FramePos = DerpsDB.FramePos or { x = addonFrame:GetLeft(), y = addonFrame:GetTop() }
+
+        -- if we need to, move the frame into the right position
+        if (DerpsDB.FramePos ~= nil) then
+            addonFrame:ClearAllPoints()
+            addonFrame:SetPoint("CENTER", UIParent, "CENTER", DerpsDB.FramePos.x, DerpsDB.FramePos.y)
+        end
+
+        -- unregister the addon_loaded event as we don't care about receiving any more of these types of events
+		this:UnregisterEvent("ADDON_LOADED")
+    elseif event == "PLAYER_LOGOUT" then
+        -- store the frame position information if we can
+        if (DerpsDB ~= nil) then
+            DerpsDB.FramePos = {
+                x = addonFrame:GetLeft(), 
+                y = addonFrame:GetTop()
+            }
+        end        
+	end
+end)
+
+-- handle slash command
 local function TJCommandHandler(msg, editBox)
     isVisible = not isVisible
 
@@ -145,18 +180,5 @@ local function TJCommandHandler(msg, editBox)
     end
 end
 
--- event frame
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("ADDON_LOADED")
-
-eventFrame:SetScript("OnEvent", function()
-	if (event == "ADDON_LOADED") then
-		CreateAddonFrame()
-
-		this:UnregisterEvent("ADDON_LOADED")
-	end
-end)
-
--- handle clash command
 SLASH_TJ1 = "/tj"
 SlashCmdList["TJ"] = TJCommandHandler
