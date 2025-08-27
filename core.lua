@@ -2,6 +2,12 @@
 local TENT_JUICE_FULL = "TENT JUICE FULL!"
 local FIND_TENT = "FIND A TENT!"
 local PLAYER = "player"
+local TENT_JUICE_EMPTY_SOUND = "igQuestFailed"
+local TENT_JUICE_FULL_SOUND = "LEVELUPSOUND"
+local AUDIO_CHANNEL = "master"
+local GAIN_TEXT = "Tent Juice: %.1f%% | Gain Rate: %.1f%%"
+local LOSS_TEXT = "Tent Juice: %.1f%% | Last Kill: %.1f%%"
+local TJ_TEXT = "Tent Juice: %.1f%%"
 
 -- local members
 local addonFrame = nil
@@ -62,9 +68,9 @@ local function CreateAddonFrame()
         -- if we're passed one second we want to do some stuff
         if self.updateTimer >= 1 then
             -- get character xp information
-            local currentXp = UnitXP(PLAYER);
-            local maxXp = UnitXPMax(PLAYER);
-            local restedXp = GetXPExhaustion();
+            local currentXp = UnitXP(PLAYER)
+            local maxXp = UnitXPMax(PLAYER)
+            local restedXp = GetXPExhaustion()
 
             -- if the character levels, we don't want a huge jump in last kill %
             if (maxXp ~= lastMaxXp and lastMaxXp ~= 0) then
@@ -80,7 +86,7 @@ local function CreateAddonFrame()
                     lastValue = 0
 
                     -- notify the player by sound
-                    PlaySound("igQuestFailed", "master")
+                    PlaySound(TENT_JUICE_EMPTY_SOUND, AUDIO_CHANNEL)
 
                     -- set the text label 
                     text:SetText(FIND_TENT)
@@ -108,14 +114,16 @@ local function CreateAddonFrame()
                         text:SetText(TENT_JUICE_FULL)
 
                         --notify the user by sound
-                        PlaySound("LEVELUPSOUND", "master")
+                        PlaySound(TENT_JUICE_FULL_SOUND, AUDIO_CHANNEL)
                     else
+
+                        -- if we notice a big enough change show the player, in either direction
                         if (difference > 0.09 and difference ~= value) then
-                            text:SetText(string.format("Tent Juice: %.1f%% | Gain Rate: %.1f%%", value, difference))
+                            text:SetText(string.format(GAIN_TEXT, value, difference))
                         elseif (difference < 0.09 and difference ~= value) then
-                            text:SetText(string.format("Tent Juice: %.1f%% | Last Kill: %.1f%%", value, difference))
-                        else
-                            text:SetText(string.format("Tent Juice: %.1f%%", value))
+                            text:SetText(string.format(LOSS_TEXT, value, difference))
+                        else -- don't show gain/last kill text - just show %
+                            text:SetText(string.format(TJ_TEXT, value))
                         end
                     end
                 end
