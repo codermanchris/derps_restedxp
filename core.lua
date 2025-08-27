@@ -15,6 +15,7 @@ local isVisible = true
 local updateTimer = 0
 local lastValue = 0
 local lastMaxXp = 0
+local maxTentJuice = false
 
 -- local functions
 local function CreateAddonFrame()
@@ -101,21 +102,28 @@ local function CreateAddonFrame()
 
                 -- caluclate rested xp percent
                 local value = 100 * restedXp / maxXp
+                local diff = value - lastValue
 
                 -- if we have a value change update the ui
-                if (lastValue ~= value) then
+                if (math.abs(diff) > 0.001) then
                     -- figure out the difference to display gain/loss rate
                     local difference = value - lastValue
                     lastValue = value
 
                     -- if we're at capacity tell the user
                     if (value >= 150) then
-                        -- inform the user that the tent juice is full
-                        text:SetText(TENT_JUICE_FULL)
+                        -- only set text and play audio once at max tent juice
+                        if (not maxTentJuice) then
+                            maxTentJuice = true
 
-                        --notify the user by sound
-                        PlaySound(TENT_JUICE_FULL_SOUND, AUDIO_CHANNEL)
+                            -- inform the user that the tent juice is full
+                            text:SetText(TENT_JUICE_FULL)
+
+                            --notify the user by sound
+                            PlaySound(TENT_JUICE_FULL_SOUND, AUDIO_CHANNEL)
+                        end
                     else
+                        maxTentJuice = false
 
                         -- if we notice a big enough change show the player, in either direction
                         if (difference > 0.09 and difference ~= value) then
