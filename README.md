@@ -1,4 +1,4 @@
-To use this addon create a folder called derps_restedxp in your AddOns folder for your Turtle WoW installation. Download the files and put them inside that folder.
+To use this addon create a folder called derps_restedxp in your AddOns folder for your Turtle WoW installation. Download the files and put them inside that folder. Alternatively, you could clone this repo in your AddOns folder.
 
 You can drag the frame anywhere you want.
 
